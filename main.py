@@ -12,6 +12,20 @@ API_URL = os.getenv("API_URL")
 bot = Bot(token=BOT_TOKEN)
 seen_events_file = "seen_events.json"
 
+# Validate the Telegram Bot Token
+def validate_token():
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
+    response = requests.get(url)
+    data = response.json()
+    
+    if not data.get("ok"):
+        print(f"Error: Invalid bot token! Response: {data}")
+        exit(1)  # Stop execution if the token is invalid
+    else:
+        print(f"✅ Bot token is valid! Bot info: {data['result']['username']}")
+
+validate_token()  # Run validation before proceeding
+
 def get_events():
     response = requests.get(API_URL)
     if response.status_code == 200:
