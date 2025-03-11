@@ -31,6 +31,7 @@ def save_seen_events(events):
         json.dump(list(events), f)
 
 async def send_notification(event):
+    print(f"Sending notification for chat ID {CHAT_ID}")
     message = f"🎟 New Event: {event['event_Name']}\n📍 Venue: {event['venue_Name']}, {event['city_Name']}\n📅 Date: {event['event_Display_Date']}\n💰 Price: {event['event_Price_Range']}\n🔗 [Buy Tickets]({event['event_Banner']})"
     await bot.send_message(chat_id=CHAT_ID, text=message, parse_mode="Markdown")
 
