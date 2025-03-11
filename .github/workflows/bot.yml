@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: seen_events.json
-          key: seen-events-${{ github.run_id }}
+          key: seen-events-cache
           restore-keys: seen-events-
 
       - name: Install dependencies
@@ -38,5 +38,4 @@ jobs:
         uses: actions/cache@v3
         with:
           path: seen_events.json
-          key: seen-events-${{ github.run_id }}
-          restore-keys: seen-events-
+          key: seen-events-cache
