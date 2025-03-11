@@ -2,8 +2,8 @@ name: Telegram Bot Automation
 
 on:
   schedule:
-    - cron: "*/5 * * * *"  # Runs every 5 minutes
-  workflow_dispatch:  # Allows manual run
+    - cron: "*/2 * * * *"  # Runs every 2 minutes
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   run-bot:
@@ -17,6 +17,13 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: Restore cached seen events
+        uses: actions/cache@v3
+        with:
+          path: seen_events.json
+          key: seen-events-${{ github.run_id }}
+          restore-keys: seen-events-
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -26,3 +33,10 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           API_URL: ${{ secrets.API_URL }}
         run: python main.py
+
+      - name: Save seen events to cache
+        uses: actions/cache@v3
+        with:
+          path: seen_events.json
+          key: seen-events-${{ github.run_id }}
+          restore-keys: seen-events-
