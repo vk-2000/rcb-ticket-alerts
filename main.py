@@ -10,7 +10,7 @@ from events import fetch_new_events
 logging.basicConfig(level=logging.INFO)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
 async def send_message_async(chat_id, message):
@@ -25,7 +25,7 @@ async def send_notifications_async(request: Request):
     """Cloud Function HTTP trigger to send notifications asynchronously."""
     logging.info("Received request to send notifications.")
 
-    if not CHAT_ID:
+    if not TELEGRAM_CHAT_ID:
         logging.error("CHAT_ID environment variable is not set.")
         return "CHAT_ID not set", 400
 
@@ -43,7 +43,7 @@ async def send_notifications_async(request: Request):
             f"💰 {event['event_Price_Range']}\n"
             f"🔗 [Buy Tickets]({event['event_Button_Text']})"
         )
-        tasks.append(send_message_async(CHAT_ID, message))
+        tasks.append(send_message_async(TELEGRAM_CHAT_ID, message))
 
     await asyncio.gather(*tasks)  # Run all message-sending tasks concurrently
     logging.info("All notifications sent successfully.")
