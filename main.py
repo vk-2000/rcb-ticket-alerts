@@ -3,6 +3,7 @@ import logging
 import asyncio
 from flask import Request
 from telegram import Bot
+from telegram.ext import Application, AIORateLimiter
 from telegram.error import TelegramError
 from events import fetch_new_events
 
@@ -11,12 +12,13 @@ logging.basicConfig(level=logging.INFO)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+app = Application.builder().token(TELEGRAM_BOT_TOKEN).rate_limiter(AIORateLimiter()).build()
 
 async def send_message_async(chat_id, message):
     """Send a message asynchronously using Telegram API."""
     try:
-        await bot.send_message(chat_id=chat_id, text=message, parse_mode="Markdown")
+        await app.bot.send_message(chat_id=chat_id, text=message, parse_mode="Markdown")
         logging.info(f"Sent notification for: {message[:30]}...")  # Log first 30 chars
     except TelegramError as e:
         logging.error(f"Failed to send message: {e}")
