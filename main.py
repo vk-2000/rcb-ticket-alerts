@@ -23,7 +23,7 @@ async def send_message_async(chat_id, message):
     except TelegramError as e:
         logging.error(f"Failed to send message: {e}")
 
-async def send_notifications_async(request: Request):
+async def send_notifications_async():
     """Cloud Function HTTP trigger to send notifications asynchronously."""
     logging.info("Received request to send notifications.")
 
