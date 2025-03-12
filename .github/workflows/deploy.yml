@@ -30,7 +30,7 @@ jobs:
       - name: Get Cloud Function URL
         id: get_function_url
         run: |
-          FUNCTION_URL=$(gcloud functions describe send_notifications --region=us-central1 --format="value(httpsTrigger.url)")
+          FUNCTION_URL=$(gcloud functions describe send_notifications --region=us-central1 --format="value(url)")
           echo "FUNCTION_URL=$FUNCTION_URL" >> $GITHUB_ENV
 
       - name: Create or Update Cloud Scheduler Job
