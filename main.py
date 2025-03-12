@@ -53,5 +53,7 @@ async def send_notifications_async(request: Request):
     return "Notifications Sent", 200
 
 def send_notifications(request: Request):
-    """Wrapper function to handle async execution in GCF."""
-    return asyncio.run(send_notifications_async(request))
+    """Entry point for the Cloud Function."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    return loop.run_until_complete(send_notifications_async())
