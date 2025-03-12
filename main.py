@@ -41,7 +41,7 @@ async def send_notifications_async(request: Request):
             f"📍 {event['venue_Name']}, {event['city_Name']}\n"
             f"📅 {event['event_Display_Date']}\n"
             f"💰 {event['event_Price_Range']}\n"
-            f"🔗 [Buy Tickets]({event['event_Button_Text']})"
+            f"🔗 [Buy Tickets](https://shop.royalchallengers.com/ticket/{event['event_Code']})"
         )
         tasks.append(send_message_async(TELEGRAM_CHAT_ID, message))
 
