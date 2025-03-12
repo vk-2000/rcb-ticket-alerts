@@ -11,7 +11,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
-def send_notifications(request: Request):
+async def send_notifications(request: Request):
     """Cloud Function HTTP trigger to send notifications."""
     logging.info("Received request to send notifications.")
 
@@ -33,7 +33,7 @@ def send_notifications(request: Request):
             f"🔗 [Buy Tickets]({event['event_Button_Text']})"
         )
         try:
-            bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode="Markdown")
+            await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode="Markdown")
             logging.info(f"Sent notification for event: {event['event_Name']}")
         except Exception as e:
             logging.error(f"Failed to send message for {event['event_Name']}: {e}")

@@ -9,7 +9,6 @@ API_URL = os.getenv("API_URL")
 def get_seen_events():
     """Retrieve seen events from Firestore."""
     doc = db.collection("settings").document("seen_events").get()
-    logging.info(f"Seen events: {doc.to_dict().get('event_ids', [])}")
     return set(doc.to_dict().get("event_ids", [])) if doc.exists else set()
 
 def save_seen_events(event_ids):
@@ -20,6 +19,7 @@ def save_seen_events(event_ids):
 def fetch_new_events():
     """Fetch new events & filter unseen ones."""
     seen_events = get_seen_events()
+    logging.info(f"Seen events: {list(seen_events)}")
     response = requests.get(API_URL).json()
     new_events = []
 
@@ -28,6 +28,6 @@ def fetch_new_events():
         if event_id not in seen_events:
             new_events.append(event)
             seen_events.add(event_id)
-
+    logging.info(f"New events: {new_events}")
     save_seen_events(seen_events)
     return new_events
