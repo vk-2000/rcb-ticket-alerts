@@ -35,12 +35,15 @@ jobs:
 
       - name: Create or Update Cloud Scheduler Job
         run: |
-          gcloud scheduler jobs list --filter="name=trigger-notifications" --format="value(name)" | grep trigger-notifications \
+          gcloud scheduler jobs list --location=us-central1 --filter="name=trigger-notifications" --format="value(name)" | grep trigger-notifications \
           && gcloud scheduler jobs update http trigger-notifications \
-            --schedule "*/3 * * * *" \
+            --location=us-central1 \
+            --schedule="*/3 * * * *" \
             --uri=$FUNCTION_URL \
             --http-method=GET \
           || gcloud scheduler jobs create http trigger-notifications \
-            --schedule "*/3 * * * *" \
+            --location=us-central1 \
+            --schedule="*/3 * * * *" \
             --uri=$FUNCTION_URL \
             --http-method=GET
+
