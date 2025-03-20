@@ -20,7 +20,11 @@ def fetch_new_events():
     """Fetch new events & filter unseen ones."""
     seen_events = get_seen_events()
     logging.info(f"Seen events: {list(seen_events)}")
-    response = requests.get(API_URL).json()
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+    }
+    response = requests.get(API_URL, headers=headers).json()
     new_events = []
 
     for event in response.get("result", []):
