@@ -127,6 +127,7 @@ async def telegram_webhook_async(request: Request):
     update = Update.de_json(request.get_json(), app.bot)
     print(f"Received update: {update}")
     logging.info(f"Received update: {update}")
+    await app.initialize()
     await app.process_update(update)
     return "OK", 200
 
