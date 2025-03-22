@@ -140,3 +140,11 @@ def telegram_webhook(request: Request):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     return loop.run_until_complete(telegram_webhook_async(request))
+
+# ------------------- CLOUD SCHEDULER HTTP ENDPOINT -------------------
+
+@functions_framework.http
+def send_notifications(request: Request):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    return loop.run_until_complete(send_notifications_async())
