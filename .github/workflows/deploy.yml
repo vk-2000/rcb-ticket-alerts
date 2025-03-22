@@ -35,15 +35,20 @@ jobs:
 
       - name: Create or Update Cloud Scheduler Job
         run: |
-          gcloud scheduler jobs list --location=us-central1 --filter="name=trigger-notifications" --format="value(name)" | grep trigger-notifications \
-          && gcloud scheduler jobs update http trigger-notifications \
-            --location=us-central1 \
-            --schedule="*/3 * * * *" \
-            --uri=$FUNCTION_URL \
-            --http-method=GET \
-          || gcloud scheduler jobs create http trigger-notifications \
-            --location=us-central1 \
-            --schedule="*/3 * * * *" \
-            --uri=$FUNCTION_URL \
-            --http-method=GET
+          if gcloud scheduler jobs describe trigger-notifications --location=us-central1 > /dev/null 2>&1; then
+            echo "Job exists. Updating..."
+            gcloud scheduler jobs update http trigger-notifications \
+              --location=us-central1 \
+              --schedule="* * * * *" \
+              --uri=$FUNCTION_URL \
+              --http-method=GET
+          else
+            echo "Job does not exist. Creating..."
+            gcloud scheduler jobs create http trigger-notifications \
+              --location=us-central1 \
+              --schedule="* * * * *" \
+              --uri=$FUNCTION_URL \
+              --http-method=GET
+          fi
+
 
