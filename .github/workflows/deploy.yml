@@ -55,7 +55,7 @@ jobs:
       - name: Set Telegram Webhook
         run: |
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook" \
-            -d "url=${{ secrets.FUNCTION_URL }}"
+            -d "url=${{ env.FUNCTION_URL }}"
 
 
 
