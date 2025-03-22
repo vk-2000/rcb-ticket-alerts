@@ -20,12 +20,22 @@ jobs:
 
       - name: Deploy Cloud Function
         run: |
-          gcloud functions deploy send_notifications \
+          gcloud functions deploy telegram_webhook \
             --runtime python39 \
             --trigger-http \
             --allow-unauthenticated \
             --region=us-central1 \
             --entry-point=telegram_webhook \
+            --set-env-vars TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }},API_URL=${{ secrets.API_URL }}
+
+      - name: Deploy Cloud Function
+        run: |
+          gcloud functions deploy send_notifications \
+            --runtime python39 \
+            --trigger-http \
+            --allow-unauthenticated \
+            --region=us-central1 \
+            --entry-point=send_notifications \
             --set-env-vars TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }},API_URL=${{ secrets.API_URL }}
 
       - name: Get Cloud Function URL
