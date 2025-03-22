@@ -122,13 +122,20 @@ async def send_notifications_async():
 
 # ------------------- TELEGRAM WEBHOOK HANDLER -------------------
 
+async def telegram_webhook_async(request: Request):
+    """Process incoming Telegram webhook updates asynchronously."""
+    update = Update.de_json(request.get_json(), app.bot)
+    print(f"Received update: {update}")
+    logging.info(f"Received update: {update}")
+    await app.process_update(update)
+    return "OK", 200
+
 @functions_framework.http
 def telegram_webhook(request: Request):
     """Process incoming Telegram webhook updates."""
     if request.method != "POST":
         return "Invalid request", 405
 
-    update = Update.de_json(request.get_json(), app.bot)
-    app.process_update(update)
-
-    return "OK", 200
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(telegram_webhook_async(request))
