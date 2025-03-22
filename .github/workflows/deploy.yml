@@ -18,7 +18,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - name: Deploy Cloud Function
+      - name: Deploy Telegram Webhook
         run: |
           gcloud functions deploy telegram_webhook \
             --runtime python39 \
@@ -28,7 +28,7 @@ jobs:
             --entry-point=telegram_webhook \
             --set-env-vars TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }},API_URL=${{ secrets.API_URL }}
 
-      - name: Deploy Cloud Function
+      - name: Deploy Send Notifications
         run: |
           gcloud functions deploy send_notifications \
             --runtime python39 \
@@ -38,11 +38,17 @@ jobs:
             --entry-point=send_notifications \
             --set-env-vars TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }},API_URL=${{ secrets.API_URL }}
 
-      - name: Get Cloud Function URL
+      - name: Get Send Notifications Function URL
         id: get_function_url
         run: |
-          FUNCTION_URL=$(gcloud functions describe send_notifications --region=us-central1 --format="value(url)")
-          echo "FUNCTION_URL=$FUNCTION_URL" >> $GITHUB_ENV
+          SEND_NOTIFICATIONS_FUNCTION_URL=$(gcloud functions describe send_notifications --region=us-central1 --format="value(url)")
+          echo "SEND_NOTIFICATIONS_FUNCTION_URL=$SEND_NOTIFICATIONS_FUNCTION_URL" >> $GITHUB_ENV
+      
+      - name: Get Telegram Webhook Function URL
+        id: get_telegram_webhook_url
+        run: |
+          TELEGRAM_WEBHOOK_FUNCTION_URL=$(gcloud functions describe telegram_webhook --region=us-central1 --format="value(url)")
+          echo "TELEGRAM_WEBHOOK_FUNCTION_URL=$TELEGRAM_WEBHOOK_FUNCTION_URL" >> $GITHUB_ENV
 
       - name: Create or Update Cloud Scheduler Job
         run: |
@@ -51,21 +57,21 @@ jobs:
             gcloud scheduler jobs update http trigger-notifications \
               --location=us-central1 \
               --schedule="* * * * *" \
-              --uri=$FUNCTION_URL \
+              --uri=$SEND_NOTIFICATIONS_FUNCTION_URL \
               --http-method=GET
           else
             echo "Job does not exist. Creating..."
             gcloud scheduler jobs create http trigger-notifications \
               --location=us-central1 \
               --schedule="* * * * *" \
-              --uri=$FUNCTION_URL \
+              --uri=$SEND_NOTIFICATIONS_FUNCTION_URL \
               --http-method=GET
           fi
         
       - name: Set Telegram Webhook
         run: |
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook" \
-            -d "url=${{ env.FUNCTION_URL }}"
+            -d "url=${{ env.TELEGRAM_WEBHOOK_FUNCTION_URL }}"
 
 
 
