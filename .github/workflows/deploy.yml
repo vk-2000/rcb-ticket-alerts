@@ -25,6 +25,7 @@ jobs:
             --trigger-http \
             --allow-unauthenticated \
             --region=us-central1 \
+            --entry-point=telegram_webhook \
             --set-env-vars TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }},API_URL=${{ secrets.API_URL }}
 
       - name: Get Cloud Function URL
